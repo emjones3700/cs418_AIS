@@ -1,6 +1,7 @@
 var assert = require('chai').assert;
 var qr = require("../core_functions.js");
 
+qr.stub = true;
 
 describe('Get all vessels', function(){
     it('', async function() {

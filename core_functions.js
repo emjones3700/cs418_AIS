@@ -1,25 +1,29 @@
 const con = require('./test_connection.js');
 
+stub = false;
 
 
-(async()=>{
-    const vessels = await getVessels();
-    console.log(vessels);
-})();
 
 function getVessels(){
-    return new Promise((resolve, reject) => {
-        con.query(
-            "SELECT * FROM VESSEL",
-            (err, result) => {
-                return err ? reject(err) : resolve(result);
-            }
-        );
-    });
+
+        if(this.stub){
+            return Promise.resolve([])
+        }
+        return new Promise((resolve, reject) => {
+            con.query(
+                "SELECT * FROM VESSEL",
+                (err, result) => {
+                    return err ? reject(err) : resolve(result);
+                }
+            );
+        });
+
+
 }
 
 module.exports = {
-    getVessels:getVessels()
+    getVessels:getVessels(),
+    stub:this.stub
 }
 
 
