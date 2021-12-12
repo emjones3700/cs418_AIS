@@ -1,16 +1,40 @@
 var assert = require('chai').assert;
 var qr = require("../core_functions.js");
+const {stub} = require("../core_functions");
 
-qr.stub = true;
 
-describe('Get all vessels', function(){
-    it('', async function() {
-        const vessels = await qr.getVessels;
-        assert.isArray( vessels );
-        assert.deepEqual(vessels, [
-            { "flag" : "Angola", "vessel_count" : 207, "avg_tonnage" : 1269 },
-            { "flag" : "Japan", "vessel_count" : 11944, "avg_tonnage" : 3320 },
-            { "flag" : "Samoa", "vessel_count" : 17, "avg_tonnage" : 900 }
-        ])
-    })
-});
+qr.stub=true;
+
+
+
+
+it('insertAISMessage', async function() {
+    console.log(qr.stub)
+    const insertedMessages = await qr.insertAISMessage();
+    assert.isNumber( insertedMessages );
+    assert.deepEqual(insertedMessages, 1);
+})
+
+
+
+it('readRecentPositions', async function() {
+    console.log(qr.stub)
+    const shipPositions = await qr.readRecentPositions();
+    assert.isArray( shipPositions );
+    assert.deepEqual(shipPositions, [])
+})
+
+it('readRecentPositionsInGivenTile', async function() {
+    console.log(qr.stub)
+    const shipPositions = await qr.readRecentPositionsInGivenTile();
+    assert.isArray( shipPositions );
+    assert.deepEqual(shipPositions, [])
+})
+
+it('readLastFivePositionsOfMMSI', async function() {
+    console.log(qr.stub)
+    const shipPositions = await qr.readLastFivePositionsOfMMSI();
+    assert.isArray( shipPositions, "Output is array" );
+    assert.lengthOf(shipPositions, 5, "Output is of length 5")
+
+})
