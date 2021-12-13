@@ -6,7 +6,6 @@ stub = false;
 
 
 
-
 function insertAISMessage(){
     if(this.stub){
         return Promise.resolve(1)
@@ -78,12 +77,76 @@ function readLastFivePositionsOfMMSI(){
 
 }
 
+function deleteOldAISMessage(){
+
+    if(this.stub){
+        return Promise.resolve([])
+    }
+    return new Promise((resolve, reject) => {
+        con.query(
+            "SELECT * FROM VESSEL",
+            (err, result) => {
+                return err ? reject(err) : resolve(result);
+            }
+        );
+    });
+}
+
+function readAllPortsMatchingName(){
+
+    if(this.stub){
+        return Promise.resolve([])
+    }
+    return new Promise((resolve, reject) => {
+        con.query(
+            "SELECT * FROM VESSEL",
+            (err, result) => {
+                return err ? reject(err) : resolve(result);
+            }
+        );
+    });
+}
+
+function readShipMostRecentPositionsWithID(){
+
+    if(this.stub){
+        return Promise.resolve([])
+    }
+    return new Promise((resolve, reject) => {
+        con.query(
+            "SELECT * FROM VESSEL",
+            (err, result) => {
+                return err ? reject(err) : resolve(result);
+            }
+        );
+    });
+}
+
+function readShipMostRecentPositionsWithPort(){
+
+    if(this.stub){
+        return Promise.resolve([])
+    }
+    return new Promise((resolve, reject) => {
+        con.query(
+            "SELECT * FROM VESSEL",
+            (err, result) => {
+                return err ? reject(err) : resolve(result);
+            }
+        );
+    });
+}
+
 module.exports = {
 
     insertAISMessage,
     readRecentPositions,
     readRecentPositionsInGivenTile,
     readLastFivePositionsOfMMSI,
+    deleteOldAISMessage,
+    readAllPortsMatchingName,
+    readShipMostRecentPositionsWithID,
+    readShipMostRecentPositionsWithPort,
 
     stub
 }
