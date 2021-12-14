@@ -3,13 +3,12 @@ var assert = require('chai').assert;
 var expect = require('chai').expect;
 var chai = require('chai');
 var cf = require("../core_functions.js");
-const {stub} = require("../core_functions");
 var chaiAsPromised = require('chai-as-promised')
-
 var should = require('chai').should();
 chai.use(chaiAsPromised);
 
-// cf.stub = true;
+//To run more in stub mode, leave this set to true. To run other tests, change to false;
+cf.stub = true;
 
 
 describe('insertAISMessageBatch', async function() {
@@ -40,6 +39,7 @@ describe('insertAISMessageBatch', async function() {
         });
     }
 })
+
 
 
 describe('getTileImageInTileId', async function() {
@@ -81,8 +81,8 @@ describe('readRecentPositionsInGivenTile', async function() {
     if (cf.stub){
         it('readRecentPositionsInGivenTileStub', async function(){
             const recentPositionsInTile = await cf.readRecentPositionsInGivenTileId(1);
-            assert.isString( recentPositionsInTile );
-            assert.deepEqual(recentPositionsInTile, "SampleImageName.png")
+            assert.isArray( recentPositionsInTile );
+            assert.deepEqual(recentPositionsInTile, [])
         });
     }
     else{
@@ -145,14 +145,12 @@ describe('readLastFivePositionsOfMMSI', async function() {
 
 
 it('deleteOldAISMessage', async function() {
-    console.log(cf.stub)
     const insertedMessages = await cf.deleteOldAISMessage();
     assert.isNumber( insertedMessages );
     assert.deepEqual(insertedMessages, 1)
 })
 
 it('readAllPortsMatchingName', async function() {
-    console.log(cf.stub)
     const portsMatchingName = await cf.readAllPortsMatchingName('Nyborg');
     assert.isArray( portsMatchingName );
     assert.deepEqual(portsMatchingName, [
@@ -162,49 +160,39 @@ it('readAllPortsMatchingName', async function() {
 })
 
 it('readShipMostRecentPositionsWithID', async function() {
-    console.log(cf.stub)
     const shipPositions = await cf.readShipMostRecentPositionsWithID();
     assert.isArray( shipPositions );
     assert.deepEqual(shipPositions, [])
 })
 
 it('readShipMostRecentPositionsWithPort', async function() {
-    console.log(cf.stub)
     const shipPositions = await cf.readShipMostRecentPositionsWithPort();
     assert.isArray( shipPositions );
     assert.deepEqual(shipPositions, [])
 })
 
 it('readShipMostRecentPositionByMMSI', async function() {
-    console.log(cf.stub)
-    const shipPosition = await cf.readShipMostRecentPositionByMMSI(440007100);
-    assert.isArray( shipPosition );
-    assert.deepEqual(shipPosition, [])
-
+    const shipPosition = await cf.readShipMostRecentPositionByMMSI(219854000);
+    assert.isArray( shipPosition )
 })
 
 it('readPermanentOrTransientVesselInformation', async function() {
-    console.log(cf.stub)
     const vesselInformation = await cf.readPermanentOrTransientVesselInformation(440007100, 5275569, 6287207);
     assert.isArray(vesselInformation);
-    assert.deepEqual(vesselInformation, [])
 })
 
 it('readAllMostRecentShipPositions', async function() {
-    console.log(cf.stub)
     const shipPositions = await cf.readAllMostRecentShipPositions();
     assert.isArray( shipPositions );
 })
 
 it('findBackgroundMapTilesContained', async function() {
-    console.log(cf.stub)
     const backgroundMapTiles = await cf.findBackgroundMapTilesContained(5037);
     assert.isArray(backgroundMapTiles );
 
 })
 
 it('readAllPositionsInTileOfPort', async function() {
-    console.log(cf.stub)
     const shipPositions = await cf.readAllPositionsInTileOfPort('Nyborg', 'Denmark');
     assert.isArray(shipPositions);
 })

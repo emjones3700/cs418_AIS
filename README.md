@@ -38,11 +38,22 @@ The connection to the database is located in [db_config.js](db_config.js)
 
 The **core functions** for this project are located in [core_functions.js](core_functions.js). Each function is tested inside of [test/test.js](test/test.js). To run these tests, use the `npm test` command.
 
+### Toggle stub mode
+
+
+To test the basic interface of the functions, inside of [test/test.js](test/test.js) leave the core functions stub property to equal `true`
+<br>
+<br>
+To run the more thourough integration tests, change the core functions stub variable to equal to `false` or comment out 
+
+`//cf.stub = true;`
+
 ## Core Functions
 
 | Description                                                           |     Function Name     | Test Name             |         Parameters        | Priority |
 |-----------------------------------------------------------------------|:---------------------:|-----------------------|:-------------------------:|----------|
 | Insert a batch of AIS messages  (Static Data and/or Position Reports) | insertAISMessageBatch | insertAISMessageBatch | Array of AIS Message data |     1    ||-----------------------------------------------------------------------|:---------------------:|-----------------------|:-------------------------:|----------|
 | Insert an AIS Message (Static Data and/or Position Reports) | insertAISMessage | insertAISMessage| AIS Message data |     2    ||-----------------------------------------------------------------------|:---------------------:|-----------------------|:-------------------------:|----------|
-| Insert a batch of AIS messages  (Static Data and/or Position Reports) | insertAISMessageBatch | insertAISMessageBatch | Array of AIS Message data |     1    ||-----------------------------------------------------------------------|:---------------------:|-----------------------|:-------------------------:|----------|
-| Insert a batch of AIS messages  (Static Data and/or Position Reports) | insertAISMessageBatch | insertAISMessageBatch | Array of AIS Message data |     1    |
+| Given a tile Id, get the actual tile (a PNG file)| getTileImageInTileId | getTileImageInTileId | Map_View ID |     4    ||-----------------------------------------------------------------------|:---------------------:|-----------------------|:-------------------------:|----------|
+| Read all most recent ship positions in the given tile | readRecentPositionsInGivenTileId | readRecentPositionsInGivenTileId | Map_View ID |   2     ||-----------------------------------------------------------------------|:---------------------:|-----------------------|:-------------------------:|----------|
+| Read last 5 positions of given MMSI | readLastFivePositionsOfMMSI | readLastFivePositionsOfMMSI | MMSI Number |   3   |
