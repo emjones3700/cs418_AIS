@@ -35,3 +35,32 @@ it('readLastFivePositionsOfMMSI', async function() {
     assert.lengthOf(shipPositions, 5, "Output is of length 5")
 })
 
+
+it('deleteOldAISMessage', async function() {
+    console.log(qr.stub)
+    const shipPositions = await qr.deleteOldAISMessage();
+    assert.isArray( shipPositions );
+    assert.deepEqual(shipPositions, [])
+})
+
+it('readAllPortsMatchingName', async function() {
+    console.log(qr.stub)
+    const shipPositions = await qr.readAllPortsMatchingName();
+    assert.isArray( shipPositions );
+    assert.deepEqual(shipPositions, [])
+})
+
+it('readShipMostRecentPositionsWithID', async function() {
+    console.log(qr.stub)
+    const shipPositions = await qr.readShipMostRecentPositionsWithID();
+    assert.isArray( shipPositions );
+    assert.deepEqual(shipPositions, [])
+})
+
+it('readShipMostRecentPositionsWithPort', async function() {
+    console.log(qr.stub)
+    const shipPositions = await qr.readShipMostRecentPositionsWithPort();
+    assert.isArray( shipPositions );
+    assert.deepEqual(shipPositions, [])
+})
+
