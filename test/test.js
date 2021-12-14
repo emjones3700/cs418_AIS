@@ -10,38 +10,40 @@ chai.use(chaiAsPromised);
 
 
 
-it('insertAISMessageBatch', async function() {
+describe('insertAISMessageBatch', async function() {
     if (qr.stub){
-        const insertedMessages = await qr.insertAISMessageBatch( [['1000-01-01 00:00:00', 235762000, 'Class A', null]]);
-        assert.isNumber( insertedMessages );
-        assert.deepEqual(insertedMessages, 1);
+        it('insertAISMessageBatchStub', async function(){
+            const insertedMessages = await qr.insertAISMessageBatch( [['1000-01-01 00:00:00', 235762000, 'Class A', null]]);
+            assert.isNumber( insertedMessages );
+            assert.deepEqual(insertedMessages, 1);
+        });
     }
     else {
+        it('insertAISMessageBatchIntegration', async function() {
+            //check valid input works
+            const validInsertedMessages = await qr.insertAISMessageBatch([['1000-01-01 00:00:00', 235762000, 'Class A', null]]);
+            assert.isNumber(validInsertedMessages);
+            assert.deepEqual(validInsertedMessages, 1);
+            //check that invalid input throws error
+            try {
+                await qr.insertAISMessageBatch('hello')
+                throw new Error('This will not run')
 
-        //check valid input works
-        const validInsertedMessages = await qr.insertAISMessageBatch([['1000-01-01 00:00:00', 235762000, 'Class A', null]]);
-        assert.isNumber(validInsertedMessages);
-        assert.deepEqual(validInsertedMessages, 1);
-
-        //check that invalid input throws error
-        try {
-            await  qr.insertAISMessageBatch('hello')
-            throw new Error('This will not run')
-
-        } catch (e) {
-            expect(e).to.be.instanceOf(Error)
-            expect(e.message).to.eql('Invalid input. Batch must be an array of ships')
-        }
-
+            } catch (e) {
+                expect(e).to.be.instanceOf(Error)
+                expect(e.message).to.eql('Invalid input. Batch must be an array of ships')
+            }
+        });
     }
 })
 
 
 it('getTileImageInTileId', async function() {
     console.log(qr.stub)
-    const TileImageInTileId = await qr.getTileImageInTileId(5041);
+    const TileImageInTileId = await qr.getTileImageInTileId(1);
+    console.log(TileImageInTileId)
     assert.isString(TileImageInTileId);
-    assert.deepEqual(TileImageInTileId, "43F7.png")
+    assert.deepEqual(TileImageInTileId, "ROOT.png")
 })
 
 

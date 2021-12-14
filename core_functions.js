@@ -42,8 +42,16 @@ function getTileImageInTileId(id){
     }
     return new Promise((resolve, reject) => {
         con.query(
-            "select RasterFile from MAP_VIEW where Id =" + id + ";",
+            "select RasterFile from MAP_VIEW where Id =" + id,
+
             (err, result) => {
+                console.log(result);
+                if(!err && result[0] && result[0].RasterFile.isNotString()){
+                    reject("No image file for given ID")
+                }
+                else if(result.length===0){
+                    reject("No data for given ID")
+                }
                 return err ? reject(err) : resolve(result[0].RasterFile);
             }
         );
