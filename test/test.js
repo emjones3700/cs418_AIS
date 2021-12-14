@@ -38,12 +38,37 @@ describe('insertAISMessageBatch', async function() {
 })
 
 
-it('getTileImageInTileId', async function() {
-    console.log(qr.stub)
-    const TileImageInTileId = await qr.getTileImageInTileId(1);
-    console.log(TileImageInTileId)
-    assert.isString(TileImageInTileId);
-    assert.deepEqual(TileImageInTileId, "ROOT.png")
+describe('getTileImageInTileId', async function() {
+    if (qr.stub){
+        it('getTileImageInTileIdStub', async function(){
+            const TileImageInTileId = await qr.getTileImageInTileId(1);
+            assert.isString( TileImageInTileId );
+            assert.deepEqual(TileImageInTileId, "SampleImageName.png")
+        });
+    }
+    else{
+        it('getTileImageInTileIdIntegration', async function(){
+
+            //check with valid input
+
+            const TileImageInTileId = await qr.getTileImageInTileId(5138);
+            assert.isString( TileImageInTileId );
+            assert.deepEqual(TileImageInTileId, "42F8.png")
+
+            //check with invalid input
+
+            try {
+                await qr.getTileImageInTileId("hi");
+                throw new Error('This will not run')
+
+            } catch (e) {
+                expect(e).to.be.instanceOf(Error)
+                expect(e.message).to.eql("Input is not a number")
+            }
+
+        });
+    }
+
 })
 
 

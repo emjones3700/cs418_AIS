@@ -35,23 +35,21 @@ function insertAISMessageBatch(batch){
 function getTileImageInTileId(id){
 
     if(this.stub){
-        return Promise.resolve([])
+        return Promise.resolve("SampleImageName.png")
     }
-    if(id.isNaN){
-        return false;
+
+    if(isNaN(id)){
+        return Promise.reject(new Error("Input is not a number"))
     }
+
     return new Promise((resolve, reject) => {
+
         con.query(
             "select RasterFile from MAP_VIEW where Id =" + id,
 
             (err, result) => {
                 console.log(result);
-                if(!err && result[0] && result[0].RasterFile.isNotString()){
-                    reject("No image file for given ID")
-                }
-                else if(result.length===0){
-                    reject("No data for given ID")
-                }
+
                 return err ? reject(err) : resolve(result[0].RasterFile);
             }
         );
