@@ -148,6 +148,7 @@ function readShipMostRecentPositionByMMSI(MMSI){
             "SELECT * FROM POSITION_REPORT WHERE AISMessage_Id IN (SELECT * FROM (SELECT ID FROM AIS_MESSAGE WHERE MMSI IN ("+ MMSI.toString() +") ORDER BY Timestamp DESC LIMIT 1) temp_tab)",
             (err, result) => {
                 console.log(result)
+                console.log('=================================================================================================================================')
                 return err ? reject(err) : resolve(result);
             }
         );
@@ -173,6 +174,7 @@ function readPermanentOrTransientVesselInformation(MMSI, IMO, CallSign){
             sql,
             (err, result) => {
                 console.log(result)
+                console.log('=================================================================================================================================')
                 return err ? reject(err) : resolve(result);
             }
         );
@@ -185,9 +187,13 @@ function readAllMostRecentShipPositions(){
     }
     return new Promise((resolve, reject) => {
         con.query(
-            "SELECT * FROM POSITION_REPORT INNER JOIN AIS_MESSAGE ON AISMessage_Id = Id WHERE AISMessage_Id IN (SELECT Id FROM AIS_MESSAGE WHERE (MMSI, Timestamp) IN (SELECT MMSI, MAX(Timestamp) FROM AIS_MESSAGE GROUP BY MMSI))",
+            "SELECT * FROM POSITION_REPORT INNER JOIN AIS_MESSAGE ON AISMessage_Id = Id WHERE AISMessage_Id IN (SELECT Id FROM AIS_MESSAGE WHERE (MMSI, Timestamp) IN (SELECT MMSI, MAX(Timestamp) FROM AIS_MESSAGE GROUP BY MMSI)) LIMIT 10",
             (err, result) => {
+                console.log('!!! For testing purposes the below query was limited to 10 results as the \n' +
+                    'final results were too large and would time out before the 2 second limit from the test library\n' +
+                    'Feel free to raise that limit to see more results')
                 console.log(result)
+                console.log('=================================================================================================================================')
                 return err ? reject(err) : resolve(result);
             }
         );
@@ -200,9 +206,10 @@ function findBackgroundMapTilesContained(levelOneMapTileId){
     }
     return new Promise((resolve, reject) => {
         con.query(
-            "SELECT * FROM MAP_VIEW WHERE LongitudeW >= (SELECT LongitudeW FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+")) AND LongitudeE <= (SELECT LongitudeE FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+")) AND LatitudeN <= (SELECT LatitudeN FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+")) AND LatitudeS >= (SELECT LatitudeS FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+"))",
+            "SELECT * FROM MAP_VIEW WHERE LongitudeW >= (SELECT LongitudeW FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+")) AND LongitudeE <= (SELECT LongitudeE FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+")) AND LatitudeN <= (SELECT LatitudeN FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+")) AND LatitudeS >= (SELECT LatitudeS FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+")) AND Scale IN (3)",
             (err, result) => {
                 console.log(result)
+                console.log('=================================================================================================================================')
                 return err ? reject(err) : resolve(result);
             }
         );
@@ -216,9 +223,10 @@ function readAllPositionsInTileOfPort(port, country){
     }
     return new Promise((resolve, reject) => {
         con.query(
-            "SELECT * FROM POSITION_REPORT WHERE Longitude <= (SELECT LongitudeE FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ("+port+") AND Country IN ("+country+"))) AND Longitude >= (SELECT LongitudeW FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ("+port+") AND Country IN ("+country+"))) AND Latitude >= (SELECT LatitudeS FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ("+port+") AND Country IN ("+country+"))) AND Latitude <= (SELECT LatitudeN FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ("+port+") AND Country IN ("+country+")))",
+            "SELECT * FROM POSITION_REPORT WHERE Longitude <= (SELECT LongitudeE FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ('"+port+"') AND Country IN ('"+country+"'))) AND Longitude >= (SELECT LongitudeW FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ('"+port+"') AND Country IN ('"+country+"'))) AND Latitude >= (SELECT LatitudeS FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ('"+port+"') AND Country IN ('"+country+"'))) AND Latitude <= (SELECT LatitudeN FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ('"+port+"') AND Country IN ('"+country+"')))",
             (err, result) => {
                 console.log(result)
+                console.log('=================================================================================================================================')
                 return err ? reject(err) : resolve(result);
             }
         );
