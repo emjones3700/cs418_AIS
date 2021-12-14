@@ -14,7 +14,7 @@ function insertAISMessageBatch(batch){
 
 
     if (!(Array.isArray(batch)) && batch.length > 0 && !(Array.isArray(batch[0]))){
-       return Promise.reject(new Error('Invalid input. Batch must be an array of ships'))
+       return Promise.reject(new Error('Invalid input. Batch must be an array of data'))
     }
 
     return new Promise((resolve, reject) => {
@@ -57,15 +57,21 @@ function getTileImageInTileId(id){
 
 }
 
-function readRecentPositionsInGivenTileId(){
+function readRecentPositionsInGivenTileId(id){
 
     if(this.stub){
         return Promise.resolve([])
     }
+
+    if(isNaN(id)){
+        return Promise.reject(new Error("Input is not a number"))
+    }
+
     return new Promise((resolve, reject) => {
         con.query(
-            "select tb2.max, am.*, pr.Latitude, pr.Longitude, pr.AISMessage_Id from AIS_MESSAGE as am, POSITION_REPORT as pr, (SELECT tb1.IMO as imo, MAX(tb1.AISMessage_Id) as max FROM (select pr.*, vess.IMO, vess.Name, m.LatitudeN,  m.LatitudeS,  m.LongitudeE, m.LongitudeW  from MAP_VIEW as m, POSITION_REPORT as pr, VESSEL as vess WHERE m.Id = 5041 AND pr.Longitude <= m.LongitudeE AND pr.Longitude >= m.LongitudeW AND pr.Latitude <= m.LatitudeN AND pr.Latitude >= m.LatitudeS LIMIT 1000) as tb1 GROUP BY tb1.IMO) as tb2 where am.Id = tb2.max AND am.Id = AISMessage_Id",
+            "select tb2.max, am.*, pr.Latitude, pr.Longitude, pr.AISMessage_Id from AIS_MESSAGE as am, POSITION_REPORT as pr, (SELECT tb1.IMO as imo, MAX(tb1.AISMessage_Id) as max FROM (select pr.*, vess.IMO, vess.Name, m.LatitudeN,  m.LatitudeS,  m.LongitudeE, m.LongitudeW  from MAP_VIEW as m, POSITION_REPORT as pr, VESSEL as vess WHERE m.Id =" + id + " AND pr.Longitude <= m.LongitudeE AND pr.Longitude >= m.LongitudeW AND pr.Latitude <= m.LatitudeN AND pr.Latitude >= m.LatitudeS LIMIT 1000) as tb1 GROUP BY tb1.IMO) as tb2 where am.Id = tb2.max AND am.Id = AISMessage_Id",
             (err, result) => {
+                console.log(result[0])
                 return err ? reject(err) : resolve(result);
             }
         );
@@ -73,14 +79,17 @@ function readRecentPositionsInGivenTileId(){
 
 }
 
-function readLastFivePositionsOfMMSI(){
+function readLastFivePositionsOfMMSI(mmsi){
 
     if(this.stub){
         return Promise.resolve(["position1", "position2", "position3", "position4", "position5"])
     }
+    if(isNaN(mmsi)){
+        return Promise.reject(new Error("Input is not a number"))
+    }
     return new Promise((resolve, reject) => {
         con.query(
-            "SELECT * FROM AIS_MESSAGE JOIN POSITION_REPORT ON POSITION_REPORT.AISMessage_Id = AIS_MESSAGE.Id WHERE MMSI=265177000 ORDER BY AIS_MESSAGE.Timestamp ASC LIMIT 5;",
+            "SELECT * FROM AIS_MESSAGE JOIN POSITION_REPORT ON POSITION_REPORT.AISMessage_Id = AIS_MESSAGE.Id WHERE MMSI=" + mmsi +" ORDER BY AIS_MESSAGE.Timestamp ASC LIMIT 5;",
             (err, result) => {
                 console.log(result);
                 return err ? reject(err) : resolve(result);
