@@ -138,6 +138,105 @@ function readShipMostRecentPositionsWithPort(){
     });
 }
 
+
+function readShipMostRecentPositionByMMSI(MMSI){
+    if(this.stub){
+        return Promise.resolve([])
+    }
+    return new Promise((resolve, reject) => {
+        con.query(
+            "SELECT * FROM POSITION_REPORT WHERE AISMessage_Id IN (SELECT * FROM (SELECT ID FROM AIS_MESSAGE WHERE MMSI IN ("+ MMSI.toString() +") ORDER BY Timestamp DESC LIMIT 1) temp_tab)",
+            (err, result) => {
+                //format result here\/
+
+
+                return err ? reject(err) : resolve(result);
+            }
+        );
+    });
+}
+
+function readPermanentOrTransientVesselInformation(MMSI, IMO, CallSign){
+    if(this.stub){
+        return Promise.resolve([])
+    }
+    var sql;
+    if(IMO === undefined && CallSign === undefined){
+        sql = "SELECT * FROM VESSEL WHERE MMSI IN (" + MMSI.toString() + ")"
+    } else if (IMO === undefined){
+        sql = "SELECT * FROM VESSEL WHERE MMSI IN (" + MMSI.toString() + ") AND CallSign IN (" + CallSign.toString() + ")"
+    } else if (CallSign === undefined){
+        sql = "SELECT * FROM VESSEL WHERE MMSI IN (" + MMSI.toString() + ") AND IMO IN (" + IMO.toString() + ")"
+    } else {
+        sql = "SELECT * FROM VESSEL WHERE MMSI IN (" + MMSI.toString() + ") AND IMO IN (" + IMO.toString() + ") AND CallSign IN (" + CallSign.toString() + ")"
+    }
+        return new Promise((resolve, reject) => {
+        con.query(
+            sql,
+            (err, result) => {
+                //format result here\/
+
+
+                return err ? reject(err) : resolve(result);
+            }
+        );
+    });
+}
+
+function readAllMostRecentShipPositions(){
+    if(this.stub){
+        return Promise.resolve([])
+    }
+    return new Promise((resolve, reject) => {
+        con.query(
+            "SELECT * FROM POSITION_REPORT INNER JOIN AIS_MESSAGE ON AISMessage_Id = Id WHERE AISMessage_Id IN (SELECT Id FROM AIS_MESSAGE WHERE (MMSI, Timestamp) IN (SELECT MMSI, MAX(Timestamp) FROM AIS_MESSAGE GROUP BY MMSI))",
+            (err, result) => {
+                //format result here\/
+
+
+                return err ? reject(err) : resolve(result);
+            }
+        );
+    });
+}
+
+function findBackgroundMapTilesContained(levelOneMapTileId){
+    if(this.stub){
+        return Promise.resolve([])
+    }
+    return new Promise((resolve, reject) => {
+        con.query(
+            "SELECT * FROM MAP_VIEW WHERE LongitudeW >= (SELECT LongitudeW FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+")) AND LongitudeE <= (SELECT LongitudeE FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+")) AND LatitudeN <= (SELECT LatitudeN FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+")) AND LatitudeS >= (SELECT LatitudeS FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+"))",
+
+            (err, result) => {
+                //format result here\/
+
+
+                return err ? reject(err) : resolve(result);
+            }
+        );
+    });
+}
+
+
+function readShipMostRecentPositionByMMSI(port, country){
+    if(this.stub){
+        return Promise.resolve([])
+    }
+    return new Promise((resolve, reject) => {
+        con.query(
+            "SELECT * FROM POSITION_REPORT WHERE Longitude <= (SELECT LongitudeE FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ("+port+") AND Country IN ("+country+"))) AND Longitude >= (SELECT LongitudeW FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ("+port+") AND Country IN ("+country+"))) AND Latitude >= (SELECT LatitudeS FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ("+port+") AND Country IN ("+country+"))) AND Latitude <= (SELECT LatitudeN FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ("+port+") AND Country IN ("+country+")))",
+            (err, result) => {
+                //format result here\/
+
+
+                return err ? reject(err) : resolve(result);
+            }
+        );
+    });
+}
+
+
 module.exports = {
 
     insertAISMessage,
@@ -148,9 +247,15 @@ module.exports = {
     readAllPortsMatchingName,
     readShipMostRecentPositionsWithID,
     readShipMostRecentPositionsWithPort,
+    readShipMostRecentPositionByMMSI,
+    readPermanentOrTransientVesselInformation,
+    readAllMostRecentShipPositions,
+    findBackgroundMapTilesContained,
 
     stub
 }
+
+
 
 
 
