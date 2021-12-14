@@ -38,16 +38,19 @@ it('readLastFivePositionsOfMMSI', async function() {
 
 it('deleteOldAISMessage', async function() {
     console.log(qr.stub)
-    const shipPositions = await qr.deleteOldAISMessage();
-    assert.isArray( shipPositions );
-    assert.deepEqual(shipPositions, [])
+    const insertedMessages = await qr.deleteOldAISMessage();
+    assert.isNumber( insertedMessages );
+    assert.deepEqual(insertedMessages, 1)
 })
 
 it('readAllPortsMatchingName', async function() {
     console.log(qr.stub)
-    const shipPositions = await qr.readAllPortsMatchingName();
-    assert.isArray( shipPositions );
-    assert.deepEqual(shipPositions, [])
+    const portsMatchingName = await qr.readAllPortsMatchingName('Nyborg');
+    assert.isArray( portsMatchingName );
+    assert.deepEqual(portsMatchingName, [
+        {"id" : 381, "name" : 'Nyborg', 'country' : 'Denmark', 'longitude' : 10.810833, 'latitude' : 55.298889 ,'MapView1_Id' : 1, 'MapView2_Id' : 5331, 'MapView3_Id' : 53312},
+        {"id" : 4970, "name" : 'Nyborg', 'country' : 'Denmark', 'longitude' : 10.790833,'latitude' : 55.306944,'MapView1_Id' : 1, 'MapView2_Id' : 5331, 'MapView3_Id' : 53312}
+    ])
 })
 
 it('readShipMostRecentPositionsWithID', async function() {
