@@ -27,6 +27,30 @@ function insertAISMessageBatch(batch){
 }
 
 
+function insertAISMessage(message){
+    if(this.stub){
+        return Promise.resolve(1)
+    }
+
+
+    if (!(Array.isArray(message)) && message.length > 0){
+        return Promise.reject(new Error('Invalid input. Batch must be an array of data'))
+    }
+
+    return new Promise((resolve, reject) => {
+        con.query(
+            "INSERT INTO AIS_MESSAGE (Timestamp, MMSI, Class, Vessel_IMO) VALUES (?, ?, ?, ?)", [message[0],message[1],message[2],message[3]],
+            (err, result) => {
+                console.log("Rows affected:" + result.affectedRows)
+                return err ? reject(err) : resolve(result.affectedRows);
+            }
+        );
+    });
+
+
+}
+
+
 
 function getTileImageInTileId(id){
 
@@ -245,6 +269,7 @@ function readAllPositionsInTileOfPort(port, country){
 module.exports = {
 
     insertAISMessageBatch,
+    insertAISMessage,
     getTileImageInTileId,
     readRecentPositionsInGivenTileId,
     readLastFivePositionsOfMMSI,

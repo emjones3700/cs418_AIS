@@ -8,7 +8,7 @@ var should = require('chai').should();
 chai.use(chaiAsPromised);
 
 //To run more in stub mode, leave this set to true. To run other tests, change to false;
-cf.stub = true;
+// cf.stub = true;
 
 
 describe('insertAISMessageBatch', async function() {
@@ -23,9 +23,9 @@ describe('insertAISMessageBatch', async function() {
         it('insertAISMessageBatchIntegration', async function() {
 
             //check valid input works
-            const validInsertedMessages = await cf.insertAISMessageBatch([['1000-01-01 00:00:00', 235762000, 'Class A', null]]);
+            const validInsertedMessages = await cf.insertAISMessageBatch([['1000-01-01 00:00:00', 235762000, 'Class A', null],['1000-01-01 00:00:00', 235762000, 'Class A', null],['1000-01-01 00:00:00', 235762000, 'Class A', null],['1000-01-01 00:00:00', 235762000, 'Class A', null],['1000-01-01 00:00:00', 235762000, 'Class A', null]]);
             assert.isNumber(validInsertedMessages);
-            assert.deepEqual(validInsertedMessages, 1);
+            assert.deepEqual(validInsertedMessages, 5);
 
             //check that invalid input throws error
             try {
@@ -41,6 +41,34 @@ describe('insertAISMessageBatch', async function() {
 })
 
 
+describe('insertAISMessage', async function() {
+    if (cf.stub){
+        it('insertAISMessageStub', async function(){
+            const insertedMessages = await cf.insertAISMessage( ['1000-01-01 00:00:00', 235742000, 'Class A', null]);;
+            assert.isNumber( insertedMessages );
+            assert.deepEqual(insertedMessages, 1);
+        });
+    }
+    else {
+        it('insertAISMessageIntegration', async function() {
+
+            //check valid input works
+            const validInsertedMessage = await cf.insertAISMessage(['1000-01-01 00:00:00', 235742000, 'Class A', null]);
+            assert.isNumber(validInsertedMessage);
+            assert.deepEqual(validInsertedMessage, 1);
+
+            //check that invalid input throws error
+            try {
+                await cf.insertAISMessage('hello')
+                throw new Error('This will not run')
+
+            } catch (e) {
+                expect(e).to.be.instanceOf(Error)
+                expect(e.message).to.eql('Invalid input. Batch must be an array of data')
+            }
+        });
+    }
+})
 
 describe('getTileImageInTileId', async function() {
 
