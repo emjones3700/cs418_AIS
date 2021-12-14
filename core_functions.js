@@ -31,6 +31,30 @@ function insertAISMessageBatch(batch){
 }
 
 
+function insertAISMessageBatch(batch){
+    if(this.stub){
+        return Promise.resolve(1)
+    }
+
+
+    if (!(Array.isArray(batch)) && batch.length > 0 && !(Array.isArray(batch[0]))){
+        return Promise.reject(new Error('Invalid input. Batch must be an array of data'))
+    }
+
+    return new Promise((resolve, reject) => {
+        con.query(
+            "INSERT INTO AIS_MESSAGE (Timestamp, MMSI, Class, Vessel_IMO) VALUES ?", [batch],
+            (err, result) => {
+                console.log("Rows affected:" + result.affectedRows)
+                return err ? reject(err) : resolve(result.affectedRows);
+            }
+        );
+    });
+
+
+}
+
+
 
 function getTileImageInTileId(id){
 

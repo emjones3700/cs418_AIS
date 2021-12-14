@@ -5,11 +5,11 @@ var chai = require('chai');
 var cf = require("../core_functions.js");
 const {stub} = require("../core_functions");
 var chaiAsPromised = require('chai-as-promised')
-const qr = require("../core_functions.js");
+
 var should = require('chai').should();
 chai.use(chaiAsPromised);
 
-
+// cf.stub = true;
 
 
 describe('insertAISMessageBatch', async function() {
@@ -80,7 +80,7 @@ describe('getTileImageInTileId', async function() {
 describe('readRecentPositionsInGivenTile', async function() {
     if (cf.stub){
         it('readRecentPositionsInGivenTileStub', async function(){
-            const recentPositionsInTile = await qr.readRecentPositionsInGivenTileId(1);
+            const recentPositionsInTile = await cf.readRecentPositionsInGivenTileId(1);
             assert.isString( recentPositionsInTile );
             assert.deepEqual(recentPositionsInTile, "SampleImageName.png")
         });
