@@ -147,9 +147,7 @@ function readShipMostRecentPositionByMMSI(MMSI){
         con.query(
             "SELECT * FROM POSITION_REPORT WHERE AISMessage_Id IN (SELECT * FROM (SELECT ID FROM AIS_MESSAGE WHERE MMSI IN ("+ MMSI.toString() +") ORDER BY Timestamp DESC LIMIT 1) temp_tab)",
             (err, result) => {
-                //format result here\/
-
-
+                console.log(result)
                 return err ? reject(err) : resolve(result);
             }
         );
@@ -174,9 +172,7 @@ function readPermanentOrTransientVesselInformation(MMSI, IMO, CallSign){
         con.query(
             sql,
             (err, result) => {
-                //format result here\/
-
-
+                console.log(result)
                 return err ? reject(err) : resolve(result);
             }
         );
@@ -191,9 +187,7 @@ function readAllMostRecentShipPositions(){
         con.query(
             "SELECT * FROM POSITION_REPORT INNER JOIN AIS_MESSAGE ON AISMessage_Id = Id WHERE AISMessage_Id IN (SELECT Id FROM AIS_MESSAGE WHERE (MMSI, Timestamp) IN (SELECT MMSI, MAX(Timestamp) FROM AIS_MESSAGE GROUP BY MMSI))",
             (err, result) => {
-                //format result here\/
-
-
+                console.log(result)
                 return err ? reject(err) : resolve(result);
             }
         );
@@ -207,11 +201,8 @@ function findBackgroundMapTilesContained(levelOneMapTileId){
     return new Promise((resolve, reject) => {
         con.query(
             "SELECT * FROM MAP_VIEW WHERE LongitudeW >= (SELECT LongitudeW FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+")) AND LongitudeE <= (SELECT LongitudeE FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+")) AND LatitudeN <= (SELECT LatitudeN FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+")) AND LatitudeS >= (SELECT LatitudeS FROM MAP_VIEW WHERE Id IN ("+levelOneMapTileId.toString()+"))",
-
             (err, result) => {
-                //format result here\/
-
-
+                console.log(result)
                 return err ? reject(err) : resolve(result);
             }
         );
@@ -219,7 +210,7 @@ function findBackgroundMapTilesContained(levelOneMapTileId){
 }
 
 
-function readShipMostRecentPositionByMMSI(port, country){
+function readAllPositionsInTileOfPort(port, country){
     if(this.stub){
         return Promise.resolve([])
     }
@@ -227,9 +218,7 @@ function readShipMostRecentPositionByMMSI(port, country){
         con.query(
             "SELECT * FROM POSITION_REPORT WHERE Longitude <= (SELECT LongitudeE FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ("+port+") AND Country IN ("+country+"))) AND Longitude >= (SELECT LongitudeW FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ("+port+") AND Country IN ("+country+"))) AND Latitude >= (SELECT LatitudeS FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ("+port+") AND Country IN ("+country+"))) AND Latitude <= (SELECT LatitudeN FROM MAP_VIEW WHERE Id IN (SELECT MapView3_ID FROM PORT WHERE Name IN ("+port+") AND Country IN ("+country+")))",
             (err, result) => {
-                //format result here\/
-
-
+                console.log(result)
                 return err ? reject(err) : resolve(result);
             }
         );
@@ -251,6 +240,7 @@ module.exports = {
     readPermanentOrTransientVesselInformation,
     readAllMostRecentShipPositions,
     findBackgroundMapTilesContained,
+    readAllPositionsInTileOfPort,
 
     stub
 }
