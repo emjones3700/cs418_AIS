@@ -6,7 +6,7 @@ const {stub} = require("../core_functions");
 
 it('insertAISMessage', async function() {
     console.log(qr.stub)
-    const insertedMessages = await qr.insertAISMessage();
+    const insertedMessages = await qr.insertAISMessageBatch([ ['1000-01-01 00:00:00', 235762000, 'Class A', null],]);
     assert.isNumber( insertedMessages );
     assert.deepEqual(insertedMessages, 1);
 })

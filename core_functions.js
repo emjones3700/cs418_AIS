@@ -1,4 +1,4 @@
-const con = require('./test_connection.js');
+const con = require('./db_config.js');
 
 stub = false;
 
@@ -6,19 +6,22 @@ stub = false;
 
 
 
-function insertAISMessage(){
+
+function insertAISMessageBatch(batch){
     if(this.stub){
         return Promise.resolve(1)
     }
-    var sql = "INSERT INTO AIS_MESSAGE (Timestamp, MMSI, Class, Vessel_IMO) VALUES ?";
-    var values = [
-        ['1000-01-01 00:00:00', 235762000, 'Class A', null],
-    ];
+
+
+    if (!(Array.isArray(batch)) && batch.length > 0 && !(Array.isArray(batch[0]))){
+        return false;
+    }
+
     return new Promise((resolve, reject) => {
         con.query(
-            sql, [values],
+            "INSERT INTO AIS_MESSAGE (Timestamp, MMSI, Class, Vessel_IMO) VALUES ?", [batch],
             (err, result) => {
-
+                console.log("Rows affected:" + result.affectedRows)
                 return err ? reject(err) : resolve(result.affectedRows);
             }
         );
@@ -31,9 +34,12 @@ function insertAISMessage(){
 
 function getTileImageInTileId(id){
 
-    // if(this.stub){
-    //     return Promise.resolve([])
-    // }
+    if(this.stub){
+        return Promise.resolve([])
+    }
+    if(id.isNaN){
+        return false;
+    }
     return new Promise((resolve, reject) => {
         con.query(
             "select RasterFile from MAP_VIEW where Id =" + id + ";",
@@ -228,7 +234,7 @@ function readAllPositionsInTileOfPort(port, country){
 
 module.exports = {
 
-    insertAISMessage,
+    insertAISMessageBatch,
     getTileImageInTileId,
     readRecentPositionsInGivenTileId,
     readLastFivePositionsOfMMSI,
