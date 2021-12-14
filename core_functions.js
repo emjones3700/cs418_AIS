@@ -14,7 +14,7 @@ function insertAISMessageBatch(batch){
 
 
     if (!(Array.isArray(batch)) && batch.length > 0 && !(Array.isArray(batch[0]))){
-        return false;
+       return Promise.reject(new Error('Invalid input. Batch must be an array of ships'))
     }
 
     return new Promise((resolve, reject) => {

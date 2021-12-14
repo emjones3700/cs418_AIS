@@ -1,16 +1,40 @@
+
 var assert = require('chai').assert;
+var expect = require('chai').expect;
+var chai = require('chai');
 var qr = require("../core_functions.js");
 const {stub} = require("../core_functions");
+var chaiAsPromised = require('chai-as-promised')
+chai.use(chaiAsPromised);
 
 
 
-it('insertAISMessage', async function() {
-    console.log(qr.stub)
-    const insertedMessages = await qr.insertAISMessageBatch([ ['1000-01-01 00:00:00', 235762000, 'Class A', null],]);
-    assert.isNumber( insertedMessages );
-    assert.deepEqual(insertedMessages, 1);
+
+it('insertAISMessageBatch', async function() {
+    if (qr.stub){
+        const insertedMessages = await qr.insertAISMessageBatch( [['1000-01-01 00:00:00', 235762000, 'Class A', null]]);
+        assert.isNumber( insertedMessages );
+        assert.deepEqual(insertedMessages, 1);
+    }
+    else {
+
+        //check valid input works
+        const validInsertedMessages = await qr.insertAISMessageBatch([['1000-01-01 00:00:00', 235762000, 'Class A', null]]);
+        assert.isNumber(validInsertedMessages);
+        assert.deepEqual(validInsertedMessages, 1);
+
+        //check that invalid input throws error
+        try {
+            await  qr.insertAISMessageBatch('hello')
+            throw new Error('This will not run')
+
+        } catch (e) {
+            expect(e).to.be.instanceOf(Error)
+            expect(e.message).to.eql('Invalid input. Batch must be an array of ships')
+        }
+
+    }
 })
-
 
 
 it('getTileImageInTileId', async function() {
