@@ -3,10 +3,6 @@ var qr = require("../core_functions.js");
 const {stub} = require("../core_functions");
 
 
-qr.stub=true;
-
-
-
 
 it('insertAISMessage', async function() {
     console.log(qr.stub)
@@ -17,18 +13,19 @@ it('insertAISMessage', async function() {
 
 
 
-it('readRecentPositions', async function() {
+it('getTileImageInTileId', async function() {
     console.log(qr.stub)
-    const shipPositions = await qr.readRecentPositions();
-    assert.isArray( shipPositions );
-    assert.deepEqual(shipPositions, [])
+    const TileImageInTileId = await qr.getTileImageInTileId(5041);
+    assert.isString(TileImageInTileId);
+    assert.deepEqual(TileImageInTileId, "43F7.png")
 })
+
 
 it('readRecentPositionsInGivenTile', async function() {
     console.log(qr.stub)
-    const shipPositions = await qr.readRecentPositionsInGivenTile();
+    const shipPositions = await qr.readRecentPositionsInGivenTileId();
     assert.isArray( shipPositions );
-    assert.deepEqual(shipPositions, [])
+
 })
 
 it('readLastFivePositionsOfMMSI', async function() {
@@ -36,5 +33,5 @@ it('readLastFivePositionsOfMMSI', async function() {
     const shipPositions = await qr.readLastFivePositionsOfMMSI();
     assert.isArray( shipPositions, "Output is array" );
     assert.lengthOf(shipPositions, 5, "Output is of length 5")
-
 })
+
