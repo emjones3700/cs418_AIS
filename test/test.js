@@ -8,7 +8,7 @@ var should = require('chai').should();
 chai.use(chaiAsPromised);
 
 //To run more in stub mode, leave this set to true. To run other tests, change to false;
-// cf.stub = true;
+cf.stub = true;
 
 
 describe('insertAISMessageBatch', async function() {
@@ -172,11 +172,11 @@ describe('readLastFivePositionsOfMMSI', async function() {
 })
 
 
-it('deleteOldAISMessage', async function() {
-    const insertedMessages = await cf.deleteOldAISMessage();
-    assert.isNumber( insertedMessages );
-    assert.deepEqual(insertedMessages, 1)
-})
+// it('deleteOldAISMessage', async function() {
+//     const insertedMessages = await cf.deleteOldAISMessage();
+//     assert.isNumber( insertedMessages );
+//     assert.deepEqual(insertedMessages, 1)
+// })
 
 it('readAllPortsMatchingName', async function() {
     const portsMatchingName = await cf.readAllPortsMatchingName('Nyborg');
@@ -188,15 +188,13 @@ it('readAllPortsMatchingName', async function() {
 })
 
 it('readShipMostRecentPositionsWithID', async function() {
-    const shipPositions = await cf.readShipMostRecentPositionsWithID();
+    const shipPositions = await cf.readShipMostRecentPositionsWithID('381');
     assert.isArray( shipPositions );
-    assert.deepEqual(shipPositions, [])
 })
 
 it('readShipMostRecentPositionsWithPort', async function() {
-    const shipPositions = await cf.readShipMostRecentPositionsWithPort();
+    const shipPositions = await cf.readShipMostRecentPositionsWithPort('Copenhagen', 'Denmark');
     assert.isArray( shipPositions );
-    assert.deepEqual(shipPositions, [])
 })
 
 it('readShipMostRecentPositionByMMSI', async function() {

@@ -120,16 +120,36 @@ function readLastFivePositionsOfMMSI(mmsi){
 }
 
 function deleteOldAISMessage(){
-    var delSQL= "DELETE FROM AIS_MESSAGE WHERE timestamp < ADDDATE(NOW(), INTERVAL - 5 MINUTE) ?"
-    return new Promise((resolve, reject) => {
+    var delmessage= "DELETE FROM STATIC_DATA WHERE AISMessage_Id IN (SELECT Id FROM AIS_MESSAGE WHERE timestamp < ADDDATE(NOW(), INTERVAL - 5 MINUTE))";
+    var delreport = 'DELETE FROM POSITION_REPORT WHERE AISMessage_Id IN (SELECT Id FROM AIS_MESSAGE WHERE timestamp < ADDDATE(NOW(), INTERVAL - 5 MINUTE))'
+    var delSQL= "DELETE FROM AIS_MESSAGE WHERE timestamp < ADDDATE(NOW(), INTERVAL - 5 MINUTE)";
+    var deletionpromise = new  Promise((resolve, reject) => {
         con.query(
-            delSQL,
+            delmessage,
             (err, result) => {
-                console.log("Number of records inserted: " + result.affectedRows);
-                return err ? reject(err) : resolve(result.affectedRows);
+                return err ? reject(err) : resolve(result);
             }
         );
     });
+    var reportdeletionpromise = new Promise((resolve, reject) => {
+        con.query(
+            delreport,
+            (err, result) => {
+                return err ? reject(err) : resolve(result);
+            }
+        );
+    });
+    var finalpromise = new Promise((resolve, reject) => {
+        con.query(
+            delSQL,
+            (err, result) => {
+                return err ? reject(err) : resolve(result);
+            }
+        );
+    });
+    return Promise.all([deletionpromise, reportdeletionpromise, finalpromise]).then((values) => {
+        return values;
+    })
 }
 
 function readAllPortsMatchingName(portName){
@@ -158,8 +178,9 @@ function readShipMostRecentPositionsWithID(portId){
     });
 }
 
-function readShipMostRecentPositionsWithPort(portName, country){
-    var sql = "SELECT"
+function readShipMostRecentPositionsWithPort(portName, country) {
+    var sql =
+        'SELECT VESSEL.MMSI AS MMSI, POSITION_REPORT.latitude AS lat, POSITION_REPORT.longitude as longitude, VESSEL.IMO AS IMO FROM PORT JOIN STATIC_DATA ON PORT.Name = STATIC_DATA.AISDestination JOIN POSITION_REPORT ON POSITION_REPORT.LastStaticData_Id = STATIC_DATA.AISMessage_Id JOIN AIS_MESSAGE ON AIS_MESSAGE.Id = STATIC_DATA.AISMessage_Id JOIN VESSEL ON VESSEL.IMO = AIS_MESSAGE.Vessel_IMO WHERE PORT.Name = \'' + portName + '\' AND PORT.Country = \'' + country + '\'';
     return new Promise((resolve, reject) => {
         con.query(
             sql,
